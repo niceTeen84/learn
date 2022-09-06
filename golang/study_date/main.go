@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -49,10 +50,16 @@ func getFirstAndLastDayOfMonth(now time.Time) (first, last time.Time) {
 	return
 }
 
+func unixTimestamp(now time.Time) {
+	fmt.Println(strconv.FormatInt(now.UTC().UnixNano(), 10))
+	fmt.Println(now.Unix())
+}
+
 func main() {
 	now := time.Now()
 	dateFormat(now)
 	dataCalc(now)
 	fst, lst := getFirstAndLastDayOfMonth(now)
 	fmt.Printf("%s %s \n", fst, lst)
+	unixTimestamp(now)
 }
