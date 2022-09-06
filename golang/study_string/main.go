@@ -32,6 +32,11 @@ func string2Int(str string) int {
 	// 第三个参数是适配的位大小 0 ，8 ，16， 32 64
 	r, _ := strconv.ParseInt(str, 10, 0)
 	// 10 进制转换, bitszie 0
+	// Atoi array to integer
+	// Itoa Integer to array
+	// iota 希腊字母 go 中只能用于常量
+	// ref https://en.wikipedia.org/wiki/Iota
+	fmt.Println(strconv.Itoa(123))
 	if v, err := strconv.Atoi(str); err == nil {
 		fmt.Printf("%T %v \n", v, v)
 	}
