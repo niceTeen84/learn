@@ -30,6 +30,9 @@ func dateFormat(now time.Time) {
 
 func dataCalc(now time.Time) {
 	d := now.Add(24 * time.Hour)
+	// ref https://polarisxu.studygolang.com/posts/go/why-time-use-2006/
+	// 按 ANSIC 标准的日期格式，月、日、时、分、秒、年，最后加 MST 时区。
+	// 对应就是 1 2 3 4 5 6 7
 	ds := d.Format("2006-01-02 15:04:05")
 	fmt.Println(ds)
 	// year
