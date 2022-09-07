@@ -2,12 +2,13 @@ package main
 
 import (
 	// .env variables init first
-	"fmt"
 	_ "github.com/joho/godotenv/autoload"
+	"fmt"
 	"local/study/sql/db"
 	"math/rand"
 	"os"
 	"runtime/trace"
+	"strings"
 	"time"
 )
 
@@ -44,9 +45,39 @@ func InsertMany() {
 	fmt.Println("insert done cost ", (time.Now().UnixMilli() - s.UnixMilli()))
 }
 
+func ExecOtherCmd() {
+	// check the version
+	var res string
+	if err := db.Db.Get(&res, `select concat_ws(';', version(), (now() + interval ? hour))`, 5); err != nil {
+		fmt.Println("query single row failed ", err.Error())
+		return
+	}
+	arr := strings.Split(res, ";")
+	version, dateTime := arr[0], arr[1]
+	fmt.Println(version, " ", dateTime)
+}
+
+type R map[string]interface{}
+
+func SqlxMapScan() {
+	// test cmd
+	rows, _ := db.Db.Queryx("show full processlist")
+	defer rows.Close()
+	list := []R{}
+	for rows.Next() {
+		row := R{}
+		rows.MapScan(row)
+		list = append(list, row)
+	}
+	rows.Close()
+	if len(list) == 0 {
+		fmt.Println("scan failed")
+		return
+	}
+}
+
 func randomString(n int) string {
 	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-
 	s := make([]rune, n)
 	for i := range s {
 		s[i] = letters[rand.Intn(len(letters))]
@@ -60,5 +91,5 @@ func main() {
 	// tarce info redirect to std err
 	trace.Start(os.Stderr)
 	defer trace.Stop()
-	InsertMany()
+	SqlxMapScan()
 }
