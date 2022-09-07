@@ -84,6 +84,7 @@ func main() {
 	// go run main.go 2> trace.out
 	// go tool trace trace.out
 	// tarce info redirect to std err
+	defer db.Db.Close()
 	trace.Start(os.Stderr)
 	defer trace.Stop()
 	ExecOtherCmd()
