@@ -2,11 +2,11 @@ package main
 
 import (
 	// .env variables init first
-	_ "github.com/joho/godotenv/autoload"
 	"fmt"
-	"os"
+	_ "github.com/joho/godotenv/autoload"
 	"local/study/sql/db"
 	"math/rand"
+	"os"
 	"runtime/trace"
 	"time"
 )
@@ -28,13 +28,18 @@ func Trx() {
 func InsertMany() {
 	compoents := []*Component{}
 	for i := 0; i < 400; i++ {
-		compoents = append(compoents, &Component{CreatedAt: time.Now(), Name: randomString(4), Number: 128})
+		elm := &Component{
+			CreatedAt: time.Now(),
+			Name:      randomString(4),
+			Number:    128}
+		compoents = append(compoents, elm)
 	}
 	s := time.Now()
 	_, err := db.Db.NamedExec(`insert into components (created_at, name, num)
 					values (:created_at, :name, :num)`, compoents)
 	if err != nil {
 		fmt.Println(err.Error())
+		return
 	}
 	fmt.Println("insert done cost ", (time.Now().UnixMilli() - s.UnixMilli()))
 }
@@ -52,7 +57,8 @@ func randomString(n int) string {
 func main() {
 	// go run main.go 2> trace.out
 	// go tool trace trace.out
+	// tarce info redirect to std err
 	trace.Start(os.Stderr)
-    defer trace.Stop()
+	defer trace.Stop()
 	InsertMany()
 }
