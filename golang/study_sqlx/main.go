@@ -8,7 +8,6 @@ import (
 	"math/rand"
 	"os"
 	"runtime/trace"
-	"strings"
 	"time"
 )
 
@@ -47,14 +46,10 @@ func InsertMany() {
 
 func ExecOtherCmd() {
 	// check the version
-	var res string
-	if err := db.Db.Get(&res, `select concat_ws(';', version(), (now() + interval ? hour))`, 5); err != nil {
-		fmt.Println("query single row failed ", err.Error())
-		return
-	}
-	arr := strings.Split(res, ";")
-	version, dateTime := arr[0], arr[1]
-	fmt.Println(version, " ", dateTime)
+	row := db.Db.QueryRowx(`select version() version, (now() + interval ? hour) time`, 5)
+	info := R{}
+	row.MapScan(info)
+	fmt.Println()
 }
 
 type R map[string]interface{}
@@ -91,5 +86,5 @@ func main() {
 	// tarce info redirect to std err
 	trace.Start(os.Stderr)
 	defer trace.Stop()
-	SqlxMapScan()
+	ExecOtherCmd()
 }
