@@ -4,8 +4,10 @@ import (
 	// .env variables init first
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"local/study/sql/db"
+	"local/study/sql/format"
 	"log"
 	"math/rand"
 	"os"
@@ -16,12 +18,12 @@ import (
 )
 
 type Component struct {
-	Id        int        `db:"id"`
-	CreatedAt *time.Time `db:"created_at"`
-	UpdateAt  *time.Time `db:"updated_at"`
-	DelAt     *time.Time `db:"deleted_at"`
-	Name      *string    `db:"name"`
-	Number    int        `db:"num"`
+	Id        int        `db:"id" json:"id"`
+	CreatedAt *format.JSONTime `db:"created_at" json:"createTime,omitempty"`
+	UpdateAt  *time.Time `db:"updated_at" json:"updateTime,omitempty"`
+	DelAt     *time.Time `db:"deleted_at" json:"deleteTime,omitempty"`
+	Name      *string    `db:"name" json:"name"`
+	Number    int        `db:"num" json:"number"`
 }
 
 func Trx() {
@@ -34,7 +36,7 @@ func InsertMany() {
 	compoents := []*Component{}
 	for i := 0; i < 400; i++ {
 		// 这里为了处理空值，结构体的类型定义为指针
-		name, now := randomString(4), time.Now()
+		name, now := randomString(4), format.JSONTime(time.Now())
 		elm := &Component{
 			CreatedAt: &now,
 			Name:      &name,
@@ -76,13 +78,16 @@ func ModifyContext() {
 		log.Fatal("begin trx failed ", err.Error())
 	}
 	query, args, _ := sqlx.In("select * from components where id in (?)", []int{1, 3, 6})
-	compos := []Component{}
+	compos := []*Component{}
 	err = tx.Select(&compos, query, args...)
 	if err != nil {
 		log.Fatal("query rows failed ", err.Error())
 	}
-
-	fmt.Println(query, args)
+	byets, err := json.Marshal(&compos)
+	if err != nil {
+		log.Fatal("json serialized failed ", err.Error())
+	}
+	fmt.Println(string(byets))
 	<-ctx.Done()
 	tx.Commit()
 }
