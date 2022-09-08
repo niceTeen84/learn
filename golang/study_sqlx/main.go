@@ -2,21 +2,26 @@ package main
 
 import (
 	// .env variables init first
-	_ "github.com/joho/godotenv/autoload"
+	"context"
+	"database/sql"
 	"fmt"
 	"local/study/sql/db"
+	"log"
 	"math/rand"
 	"os"
 	"runtime/trace"
 	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type Component struct {
-	Id        int       `db:"id"`
-	CreatedAt time.Time `db:"created_at"`
-	UpdateAt  time.Time `db:"updated_at"`
-	Name      string    `db:"name"`
-	Number    int       `db:"num"`
+	Id        int        `db:"id"`
+	CreatedAt *time.Time `db:"created_at"`
+	UpdateAt  *time.Time `db:"updated_at"`
+	DelAt     *time.Time `db:"deleted_at"`
+	Name      *string    `db:"name"`
+	Number    int        `db:"num"`
 }
 
 func Trx() {
@@ -28,9 +33,11 @@ func Trx() {
 func InsertMany() {
 	compoents := []*Component{}
 	for i := 0; i < 400; i++ {
+		// 这里为了处理空值，结构体的类型定义为指针
+		name, now := randomString(4), time.Now()
 		elm := &Component{
-			CreatedAt: time.Now(),
-			Name:      randomString(4),
+			CreatedAt: &now,
+			Name:      &name,
 			Number:    128}
 		compoents = append(compoents, elm)
 	}
@@ -50,6 +57,34 @@ func ExecOtherCmd() {
 	info := R{}
 	row.MapScan(info)
 	fmt.Println()
+}
+
+func ModifyVariable() {
+	res := db.Db.MustExec("set global innodb_flush_log_at_trx_commit = 0")
+	if _, err := res.RowsAffected(); err != nil {
+		fmt.Println("set global variables failed ", err.Error())
+	}
+	// fmt.Println(num, " row changes")
+}
+
+func ModifyContext() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	conn, _ := db.Db.Connx(ctx)
+	tx, err := conn.BeginTxx(context.Background(), &sql.TxOptions{Isolation: sql.LevelRepeatableRead, ReadOnly: false})
+	if err != nil {
+		log.Fatal("begin trx failed ", err.Error())
+	}
+	query, args, _ := sqlx.In("select * from components where id in (?)", []int{1, 3, 6})
+	compos := []Component{}
+	err = tx.Select(&compos, query, args...)
+	if err != nil {
+		log.Fatal("query rows failed ", err.Error())
+	}
+
+	fmt.Println(query, args)
+	<-ctx.Done()
+	tx.Commit()
 }
 
 type R map[string]interface{}
@@ -87,5 +122,5 @@ func main() {
 	defer db.Db.Close()
 	trace.Start(os.Stderr)
 	defer trace.Stop()
-	ExecOtherCmd()
+	ModifyContext()
 }
