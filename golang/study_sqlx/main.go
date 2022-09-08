@@ -18,12 +18,12 @@ import (
 )
 
 type Component struct {
-	Id        int        `db:"id" json:"id"`
+	Id        int              `db:"id" json:"id"`
 	CreatedAt *format.JSONTime `db:"created_at" json:"createTime,omitempty"`
-	UpdateAt  *time.Time `db:"updated_at" json:"updateTime,omitempty"`
-	DelAt     *time.Time `db:"deleted_at" json:"deleteTime,omitempty"`
-	Name      *string    `db:"name" json:"name"`
-	Number    int        `db:"num" json:"number"`
+	UpdateAt  *time.Time       `db:"updated_at" json:"updateTime,omitempty"`
+	DelAt     *time.Time       `db:"deleted_at" json:"deleteTime,omitempty"`
+	Name      *string          `db:"name" json:"name"`
+	Number    int              `db:"num" json:"number"`
 }
 
 func Trx() {
