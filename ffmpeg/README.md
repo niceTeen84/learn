@@ -42,3 +42,9 @@ ffmpeg -re -i demo.mp4 -vcodec copy -f flv rtmp://localhost:1935/rtmplive/home
  real-time buffer [Integrated Camera] [video input] too full or near too full (136% of size: 3041280 [rtbufsize parameter])! frame dropped!
 ```
 VLC 拉流时会出现上述错误
+
+[stackoverflow ref](https://stackoverflow.com/questions/45643572/ffmpeg-problems-with-real-time-buffer)
+```shell
+# -rtbufsize 1G
+./ffmpeg.exe -f dshow -rtbufsize 1G -i video="Integrated Camera" -vcodec libx264 -acodec copy -preset:v ultrafast -tune:v zerolatency -f flv rtmp://192.168.0.150:1935/rtmplive/home
+```
