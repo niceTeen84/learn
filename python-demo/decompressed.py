@@ -15,12 +15,12 @@ def main():
     conn = pymysql.connect(**info)
     with conn:
         with conn.cursor(DictCursor) as cur:
-            cur.execute("select compress(repeat('hello', 100)) res")
+            cur.execute("select compress(repeat('hello 🦍', 100)) res")
             res = cur.fetchone()
             # mysql compress
             result = zlib.decompress(res['res'][4:]).decode(CHARSET)
     # 对比
-    r = zlib.compress(b'hello' * 100)
+    r = zlib.compress(('hello 🦍' * 100).encode(CHARSET))
     print('bytes to hex: ', r.hex())
     print('revert hex to bytes: ', bytes(bytearray.fromhex(r.hex())))
     assert result == zlib.decompress(r).decode(CHARSET)
