@@ -19,6 +19,15 @@ def main():
             cur.execute(f"select compress(repeat('{TEST_STR}', 100)) res")
             res = cur.fetchone()
             # mysql compress
+            """
+            Nonempty strings are stored as a 4-byte length of the uncompressed string (low byte first),
+             followed by the compressed string. If the string ends with space, an extra . 
+             character is added to avoid problems with endspace trimming 
+             should the result be stored in a CHAR or VARCHAR column.
+              (However, use of nonbinary string data types such as CHAR or VARCHAR to store
+               compressed strings is not recommended anyway because character set conversion may occur.
+                Use a VARBINARY or BLOB binary string column instead.)
+            """
             result = zlib.decompress(res['res'][4:]).decode(CHARSET)
     # 对比
     r = zlib.compress((TEST_STR * 100).encode(CHARSET))
