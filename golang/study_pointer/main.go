@@ -24,6 +24,12 @@ func caseOne() {
 	var slice []Person
 	slice = append(slice, Person{Name: "tom", Age: 18}, Person{Name: "jerry", Age: 17})
 	elm := slice[0]
+	pts := &(slice[0])
+	// the same output
+	fmt.Println(elm.Age)
+	fmt.Println(pts.Age)
+	fmt.Println((*pts).Age)
+
 	fmt.Printf("case one slice addr %p first element addr %p \n", slice, &elm)
 	BypassSliceOne(slice)
 }
