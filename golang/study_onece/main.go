@@ -8,6 +8,7 @@ import (
 var (
 	BookDict map[uint32]*Book
 	OnlyOne  sync.Once
+	MyDict map[string]any
 )
 
 type Book struct {
@@ -15,6 +16,7 @@ type Book struct {
 	Name,
 	Isbn string
 }
+
 
 func loadBooks() {
 	fmt.Println("init book dict")
@@ -24,6 +26,10 @@ func loadBooks() {
 	BookDict[3] = &Book{Id: 3, Name: "english", Isbn: "123456"}
 	BookDict[4] = &Book{Id: 4, Name: "chemy", Isbn: "123456"}
 	BookDict[5] = &Book{Id: 5, Name: "art", Isbn: "123456"}
+
+	MyDict = make(map[string]any)
+	MyDict["a"] = true
+	MyDict["b"] = uint8(15)
 
 }
 
@@ -36,4 +42,5 @@ func GetBookById(id uint32) *Book {
 func main() {
 	fmt.Println(GetBookById(2))
 	fmt.Println(GetBookById(3))
+	fmt.Println(MyDict["a"])
 }
