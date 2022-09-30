@@ -75,7 +75,7 @@ func LoopUntilCanel(ctx context.Context) {
 }
 
 func UsePool() {
-	pool, _ := ants.NewPool(1000, ants.WithExpiryDuration(10 * time.Second), ants.WithMaxBlockingTasks(100))
+	pool, _ := ants.NewPool(1000, ants.WithExpiryDuration(10*time.Second), ants.WithMaxBlockingTasks(100))
 	defer pool.Release()
 }
 
