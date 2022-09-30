@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log"
 
+	// jsoniter "github.com/json-iterator/go"
 	"github.com/oliveagle/jsonpath"
 )
 
 func Parse(data string) {
+	// var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	var jo any
 	json.Unmarshal([]byte(data), &jo)
 	// res, err := jsonpath.JsonPathLookup(jo, "$.expensive")
