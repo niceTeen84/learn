@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math"
 
 	"github.com/oliveagle/jsonpath"
 )
@@ -22,7 +21,8 @@ func Parse(data string) {
 	res, err := pat.Lookup(jo)
 
 	// 向下取整数部分
-	res = math.Floor(res.(float64))
+	// res = math.Floor(res.(float64))
+	res = int(res.(float64))
 	if err != nil {
 		log.Fatal("lookup failed ", err.Error())
 	}
