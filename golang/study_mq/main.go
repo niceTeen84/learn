@@ -42,12 +42,16 @@ func ProduceMsg(cnf *nsq.Config) {
 		log.Fatal("init nsq failed ", err.Error())
 	}
 
-	messageBody := []byte("{\"name\": \"jerry\", \"age\": 15}")
-
-	err = producer.Publish(TOPIC, messageBody)
+	messageBody := []byte("{\"name\": \"renbw\", \"age\": 27}")
+	// producer.Publish(TOPIC, messageBody)
+	// 延迟发送，实现类似于死信队列的机制
+	sig := make(chan *nsq.ProducerTransaction, 1)
+	err = producer.DeferredPublishAsync(TOPIC, 10*time.Second, messageBody, sig)
 	if err != nil {
 		log.Fatal("sending msg failed ", err.Error())
 	}
+	<-sig
+
 }
 
 func Consumer(cnf *nsq.Config, idx int) {
