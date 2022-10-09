@@ -43,3 +43,8 @@ curl -d "{\"name\": \"tom\",\"age\": 18}" http://127.0.0.1:4151/pub?topic=renbw&
 
 - NSQ 的 `channel` 概念类似于传统消息队列（kafka...）的 **消费组**。
 
+- NSQ admin 如果想开启图表模式需要三步设置：
+  1. 搭建一个单独的进程用于收集信息, 采用 UDP 协议接受推送数据。eg. [statsdaemon](https://github.com/bitly/statsdaemon)
+  2. **nsqd** 启动参数增加 `--statsd-address=<host>:<port>`
+  3. **nsqadmin** 启动参数增加 `--graphite-url=http://<host>:<port>`
+
