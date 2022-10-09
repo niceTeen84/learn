@@ -48,3 +48,4 @@ curl -d "{\"name\": \"tom\",\"age\": 18}" http://127.0.0.1:4151/pub?topic=renbw&
   2. **nsqd** 启动参数增加 `--statsd-address=<host>:<port>`
   3. **nsqadmin** 启动参数增加 `--graphite-url=http://<host>:<port>`
 
+- NSQ 通过设置 `--mem-queue-size=0` 将所有发布的消息保存在磁盘上。
