@@ -43,14 +43,14 @@ func ProduceMsg(cnf *nsq.Config) {
 	}
 
 	messageBody := []byte("{\"name\": \"renbw\", \"age\": 27}")
-	// producer.Publish(TOPIC, messageBody)
+	producer.DeferredPublish(TOPIC, 10*time.Second, messageBody)
 	// 延迟发送，实现类似于死信队列的机制
-	sig := make(chan *nsq.ProducerTransaction, 1)
-	err = producer.DeferredPublishAsync(TOPIC, 10*time.Second, messageBody, sig)
+	// sig := make(chan *nsq.ProducerTransaction, 1)
+	// err = producer.DeferredPublishAsync(TOPIC, 10*time.Second, messageBody, sig)
 	if err != nil {
 		log.Fatal("sending msg failed ", err.Error())
 	}
-	<-sig
+	// <-sig
 
 }
 
