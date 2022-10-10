@@ -13,7 +13,7 @@ services:
       - "4161:4161"
   nsqd:
     image: nsqio/nsq
-    command: /nsqd --lookupd-tcp-address=nsqlookupd:4160 --data-path=/data --mem-queue-size=2048
+    command: /nsqd --lookupd-tcp-address=nsqlookupd:4160 --data-path=/data --mem-queue-size=1
     depends_on:
       - nsqlookupd
     ports:
