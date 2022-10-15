@@ -1,0 +1,5 @@
+hello
+renbowen
+keep going
+
+select * from user where id = %d
