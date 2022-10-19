@@ -17,6 +17,7 @@ import (
 	"testing"
 	"time"
 	"net/http"
+	_ "embed"
 )
 
 type Men struct {
@@ -67,6 +68,9 @@ func TestCaseTwo(t *testing.T) {
 	byts, _ := json.Marshal(vo)
 	fmt.Println(string(byts))
 }
+
+//go:embed templates/index.html
+var template string
 
 func TestStartEngine(t *testing.T) {
 	engine := startEngine()
