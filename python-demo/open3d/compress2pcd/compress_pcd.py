@@ -1,10 +1,14 @@
 import open3d as o3d
 import pandas as pd
-import os
 import numpy as np
+import os, re
+
 
 SCAN_DATA_ROOT = 'D:\\qingdao\\青岛\\导出'
 COLUMNS = ['x', 'y', 'z', 'r', 'g', 'b']
+
+FLOAT = 'float32'
+INT16 = 'int16'
 
 
 def convert_rgb(f_path: str) -> np.ndarray:
@@ -14,13 +18,14 @@ def convert_rgb(f_path: str) -> np.ndarray:
     :param f_path: the scan file abs path
     :return: numpy ndarray
     """
+    type_dict = {elm: FLOAT if idx < 3 else INT16 for idx, elm in enumerate(COLUMNS)}
     df: pd.DataFrame = pd.read_csv(f_path,
                                    sep=' ',
                                    names=COLUMNS,
-                                   dtype={elm: 'float32' if idx < 3 else 'int16' for idx, elm in enumerate(COLUMNS)})
+                                   dtype=type_dict)
     for k in COLUMNS[3:]:
         df[k] = df[k] / 255
-    return df.to_numpy(dtype='float32')
+    return df.to_numpy(dtype=FLOAT)
 
 
 def convert_to_pcd(arr: np.ndarray, out: str) -> None:
@@ -41,11 +46,11 @@ def main():
     # walk dir
     for root, dirs, files in os.walk(SCAN_DATA_ROOT, topdown=False):
         for name in files:
-            abs_path = str(os.path.join(root, name))
-            ret = convert_rgb(abs_path)
-            convert_to_pcd(ret, f'{root}\\{name.split(".")[0]}.pcd')
+            out, abs_path = re.sub('(xyz)$', 'pcd', name), str(os.path.join(root, name))
+            arr = convert_rgb(abs_path)
+            convert_to_pcd(arr, f'{root}\\{out}')
+            del arr
 
 
 if __name__ == '__main__':
     main()
-    
