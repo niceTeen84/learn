@@ -9,6 +9,7 @@ COLUMNS = ['x', 'y', 'z', 'r', 'g', 'b']
 
 FLOAT = 'float32'
 INT16 = 'int16'
+SPACE = ' '
 
 
 def convert_rgb(f_path: str) -> np.ndarray:
@@ -20,7 +21,7 @@ def convert_rgb(f_path: str) -> np.ndarray:
     """
     type_dict = {elm: FLOAT if idx < 3 else INT16 for idx, elm in enumerate(COLUMNS)}
     df: pd.DataFrame = pd.read_csv(f_path,
-                                   sep=' ',
+                                   sep=SPACE,
                                    names=COLUMNS,
                                    dtype=type_dict)
     for k in COLUMNS[3:]:
@@ -44,7 +45,7 @@ def convert_to_pcd(arr: np.ndarray, out: str) -> None:
 
 def main():
     # walk dir
-    for root, dirs, files in os.walk(SCAN_DATA_ROOT, topdown=False):
+    for root, _, files in os.walk(SCAN_DATA_ROOT, topdown=False):
         for name in files:
             out, abs_path = re.sub('(xyz)$', 'pcd', name), str(os.path.join(root, name))
             arr = convert_rgb(abs_path)
