@@ -4,6 +4,7 @@ import os
 import numpy as np
 
 SCAN_DATA_ROOT = 'D:\\qingdao\\青岛\\导出'
+COLUMNS = ['x', 'y', 'z', 'r', 'g', 'b']
 
 
 def convert_rgb(f_path: str) -> np.ndarray:
@@ -15,10 +16,9 @@ def convert_rgb(f_path: str) -> np.ndarray:
     """
     df: pd.DataFrame = pd.read_csv(f_path,
                                    sep=' ',
-                                   names=['x', 'y', 'z', 'r', 'g', 'b'],
-                                   dtype={'x': 'float32', 'y': 'float32', 'z': 'float32',
-                                          'r': 'int16', 'g': 'int16', 'b': 'int16'})
-    for k in ['r', 'g', 'b']:
+                                   names=COLUMNS,
+                                   dtype={elm: 'float32' if idx < 3 else 'int16' for idx, elm in enumerate(COLUMNS)})
+    for k in COLUMNS[3:]:
         df[k] = df[k] / 255
     return df.to_numpy(dtype='float32')
 
@@ -48,3 +48,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
