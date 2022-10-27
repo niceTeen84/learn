@@ -2,7 +2,7 @@
  * @Author: bowen ren armyknife84@163.com
  * @Date: 2022-10-10 15:58:10
  * @LastEditors: bowen ren armyknife84@163.com
- * @LastEditTime: 2022-10-10 18:34:55
+ * @LastEditTime: 2022-10-25 11:35:42
  * @FilePath: \study_cmd\main_test.go
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -10,19 +10,24 @@ package main
 
 import (
 	"database/sql"
+	_ "embed"
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/assert"
+	"log"
+	"net/http"
 	"net/http/httptest"
+	"regexp"
+	"runtime"
 	"testing"
 	"time"
-	"net/http"
-	_ "embed"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type Men struct {
-	Name sql.NullString `json:"name"`
-	Age  sql.NullInt16  `json:"age"`
+	Name   sql.NullString `json:"name"`
+	Age    sql.NullInt16  `json:"age"`
+	Salary float32        `json:"salary"`
 }
 
 type MenVo struct {
@@ -42,7 +47,6 @@ func (men *Men) ToVo() (ret *MenVo) {
 }
 
 type ISOfmt time.Time
-
 
 func TestCase(t *testing.T) {
 	// 测试 am struct
@@ -79,4 +83,17 @@ func TestStartEngine(t *testing.T) {
 	engine.ServeHTTP(record, req)
 	assert.Equal(t, 200, record.Code)
 	assert.Equal(t, "PONG", record.Body.String())
+	fmt.Println(template)
+	re, err := regexp.Compile("^/[\\d]{3}-[\\d]{4}-[\\d]{4}/$")
+	if err != nil {
+		log.Fatal("compile regex failed ")
+	}
+	fmt.Println(re)
+}
+
+func BenchmarkExample(b *testing.B) {
+	// go tool pprof -http=:8080 heap.out
+	for i := 0; i < b.N; i++ {
+		runtime.KeepAlive("i am a benchmark")
+	}
 }
